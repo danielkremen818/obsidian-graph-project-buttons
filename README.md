@@ -25,6 +25,13 @@ search is set for you.
   deleted, or renamed.
 - Zero runtime dependencies. Desktop and mobile.
 
+## Privacy
+
+To build the project buttons, the plugin reads only the vault's file *list*
+(file paths via `getFiles`) so it can find the subfolders under your projects
+root. It never opens or reads file contents, makes no network requests, and
+writes nothing outside its own plugin settings.
+
 ## Install
 
 ### Manually
