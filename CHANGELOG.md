@@ -6,6 +6,17 @@ adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
 
+## [1.1.2] - 2026-06-14
+
+### Added
+- A GitHub Sponsors funding link, surfaced through the plugin manifest
+  (`fundingUrl`) and a short Support section in the README.
+
+### Changed
+- Upgraded the CI and release GitHub Actions to the Node 24 runtime
+  (`actions/checkout@v5`, `actions/setup-node@v5`), clearing the upcoming
+  forced-Node-24 deprecation for JavaScript actions.
+
 ## [1.1.1] - 2026-06-14
 
 ### Changed
@@ -38,6 +49,7 @@ plugin to a TypeScript + esbuild repository.
 - Full settings tab (root folder, curated query/label, button toggles, icons,
   position, start-collapsed) persisted via `loadData`/`saveData`.
 
-[Unreleased]: https://github.com/danielkremen818/obsidian-graph-project-buttons/compare/1.1.1...HEAD
+[Unreleased]: https://github.com/danielkremen818/obsidian-graph-project-buttons/compare/1.1.2...HEAD
+[1.1.2]: https://github.com/danielkremen818/obsidian-graph-project-buttons/compare/1.1.1...1.1.2
 [1.1.1]: https://github.com/danielkremen818/obsidian-graph-project-buttons/compare/1.1.0...1.1.1
 [1.1.0]: https://github.com/danielkremen818/obsidian-graph-project-buttons/releases/tag/1.1.0
