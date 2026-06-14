@@ -86,6 +86,12 @@ See [docs/architecture.md](docs/architecture.md) for how the injection,
 [docs/publishing.md](docs/publishing.md) for the community-directory submission
 steps. Contributor guidelines live in [CONTRIBUTING.md](CONTRIBUTING.md).
 
+## Support
+
+If this plugin is useful to you, you can sponsor its development through
+[GitHub Sponsors](https://github.com/sponsors/danielkremen818). Sponsorship is
+entirely optional — the plugin stays free and open source either way.
+
 ## License
 
 [MIT](LICENSE) © 2026 Daniel Kremen
