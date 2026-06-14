@@ -7,6 +7,8 @@ on:
 
 permissions:
   contents: write
+  id-token: write
+  attestations: write
 
 concurrency:
   group: release-${{ github.ref }}
@@ -26,13 +28,50 @@ jobs:
           npm run lint
           npm test
           npm run build
+      - name: Attest build provenance
+        uses: actions/attest-build-provenance@v2
+        with:
+          subject-path: |
+            main.js
+            manifest.json
+            styles.css
+      - name: Extract release notes from changelog
+        run: |
+          tag="${GITHUB_REF#refs/tags/}"
+          # Pull the section for this version out of CHANGELOG.md (Keep a Changelog
+          # style: "## [1.1.1] - ..." up to the next "## " heading), trimming any
+          # leading blank lines so the notes don't start with whitespace.
+          awk -v ver="$tag" '
+            $0 ~ "^## \\[" ver "\\]" { grab = 1; next }
+            grab && /^## / { exit }
+            grab {
+              if (!started && $0 ~ /^[[:space:]]*$/) next
+              started = 1
+              print
+            }
+          ' CHANGELOG.md > /tmp/notes.md
+          if [ -s /tmp/notes.md ]; then
+            echo "have_notes=true" >> "$GITHUB_OUTPUT"
+          else
+            echo "have_notes=false" >> "$GITHUB_OUTPUT"
+          fi
+        id: notes
       # The tag must match manifest.json "version" exactly, with NO leading "v".
       - name: Create release
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
           tag="${GITHUB_REF#refs/tags/}"
-          gh release create "$tag" \
-            --title="$tag" \
-            --draft \
-            main.js manifest.json styles.css
+          if [ "${{ steps.notes.outputs.have_notes }}" = "true" ]; then
+            gh release create "$tag" \
+              --title="$tag" \
+              --notes-file /tmp/notes.md \
+              --draft \
+              main.js manifest.json styles.css
+          else
+            gh release create "$tag" \
+              --title="$tag" \
+              --generate-notes \
+              --draft \
+              main.js manifest.json styles.css
+          fi

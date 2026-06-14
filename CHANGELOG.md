@@ -6,6 +6,20 @@ adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
 
+## [1.1.1] - 2026-06-14
+
+### Changed
+- Dropped the `builtin-modules` dev dependency in favour of Node's own
+  `module.builtinModules`, so the esbuild config keeps both bare and
+  `node:`-prefixed builtins external without a third-party package.
+- Release builds now attach build-provenance attestations, and the release
+  notes are pulled straight from this changelog instead of being left blank.
+
+### Added
+- A short Privacy section in the README spelling out that the plugin only reads
+  the vault's file list (paths) to find project folders — never file contents,
+  no network, nothing written outside its own settings.
+
 ## [1.1.0] - 2026-06-14
 
 First public release, ported from the directly-installed plain-JavaScript
@@ -24,5 +38,6 @@ plugin to a TypeScript + esbuild repository.
 - Full settings tab (root folder, curated query/label, button toggles, icons,
   position, start-collapsed) persisted via `loadData`/`saveData`.
 
-[Unreleased]: https://github.com/danielkremen818/obsidian-graph-project-buttons/compare/1.1.0...HEAD
+[Unreleased]: https://github.com/danielkremen818/obsidian-graph-project-buttons/compare/1.1.1...HEAD
+[1.1.1]: https://github.com/danielkremen818/obsidian-graph-project-buttons/compare/1.1.0...1.1.1
 [1.1.0]: https://github.com/danielkremen818/obsidian-graph-project-buttons/releases/tag/1.1.0
