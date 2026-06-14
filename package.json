@@ -1,0 +1,44 @@
+{
+  "name": "obsidian-graph-project-buttons",
+  "version": "1.1.0",
+  "description": "One-click project filter buttons for the Obsidian graph view.",
+  "main": "main.js",
+  "scripts": {
+    "dev": "node esbuild.config.mjs",
+    "build": "tsc -noEmit -skipLibCheck && node esbuild.config.mjs production",
+    "test": "node --import tsx --test tests/*.test.ts",
+    "lint": "eslint src",
+    "version": "node version-bump.mjs && git add manifest.json versions.json"
+  },
+  "keywords": [
+    "obsidian",
+    "obsidian-plugin",
+    "graph",
+    "graph-view",
+    "projects",
+    "filter"
+  ],
+  "author": "Daniel Kremen",
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/danielkremen818/obsidian-graph-project-buttons.git"
+  },
+  "bugs": {
+    "url": "https://github.com/danielkremen818/obsidian-graph-project-buttons/issues"
+  },
+  "homepage": "https://github.com/danielkremen818/obsidian-graph-project-buttons#readme",
+  "devDependencies": {
+    "@types/node": "latest",
+    "@typescript-eslint/parser": "latest",
+    "builtin-modules": "latest",
+    "esbuild": "latest",
+    "eslint": "latest",
+    "eslint-plugin-obsidianmd": "latest",
+    "obsidian": "latest",
+    "tslib": "latest",
+    "tsx": "latest",
+    "typescript": "latest",
+    "typescript-eslint": "latest"
+  }
+}
