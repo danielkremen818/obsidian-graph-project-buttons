@@ -10,9 +10,6 @@ search is set for you.
 
 ![Graph Project Buttons in the graph view](docs/screenshot.png)
 
-> Screenshot placeholder — drop a real capture at `docs/screenshot.png` (and any
-> extras under `docs/`) before publishing.
-
 ## Features
 
 - A button per immediate subfolder of your projects root, auto-discovered from

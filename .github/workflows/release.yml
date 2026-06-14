@@ -20,9 +20,11 @@ jobs:
       - uses: actions/setup-node@v4
         with:
           node-version: "20"
-      - name: Build plugin
+      - name: Build, lint and test
         run: |
           npm ci
+          npm run lint
+          npm test
           npm run build
       # The tag must match manifest.json "version" exactly, with NO leading "v".
       - name: Create release
