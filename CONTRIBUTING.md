@@ -13,11 +13,17 @@ Contributions that keep it focused are very welcome.
 ## Project layout
 
 ```
-src/main.ts       Plugin class: injection, MutationObserver, search dispatch
-src/settings.ts   settings interface + settings tab
-src/projects.ts   pure, Obsidian-free helpers (unit-tested)
-tests/            node:test suites for the pure helpers
-docs/             architecture + publishing notes
+src/main.ts          Plugin class: injection, MutationObserver, search dispatch
+src/settings.ts      settings interface, DEFAULT_SETTINGS, and the settings tab
+src/projects.ts      pure, Obsidian-free helpers (unit-tested)
+tests/               node:test suites for the pure helpers
+docs/                architecture + publishing notes
+styles.css           the bar/button styles (shipped as-is)
+manifest.json        plugin manifest (id, version, minAppVersion)
+versions.json        plugin-version -> minAppVersion map
+esbuild.config.mjs   bundler config (entry src/main.ts -> main.js)
+version-bump.mjs     syncs manifest.json + versions.json from npm_package_version
+eslint.config.mjs    eslint-plugin-obsidianmd + typescript-eslint (flat config)
 ```
 
 The shipped `main.js` is **generated** by esbuild — never edit it by hand. Edit
@@ -44,9 +50,10 @@ Every change must keep **all** of these green (CI enforces them):
 2. `npm test` passes.
 3. `npm run lint` is clean.
 
-And the plugin invariants in [AGENTS.md](AGENTS.md) must hold — in particular:
-no `setInterval` (use the `MutationObserver`), no `innerHTML`, and full cleanup
-on unload.
+A few plugin invariants also have to hold: no `setInterval` (re-injection uses a
+`MutationObserver`), no `innerHTML` (build DOM with `createDiv`/`createEl`), and
+full cleanup on unload (disconnect observers, remove every `.gpb-bar`). See
+[docs/architecture.md](docs/architecture.md) for why.
 
 ## Where to put logic
 

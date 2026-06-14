@@ -77,8 +77,7 @@ To develop against a real vault, symlink or copy this folder into
 See [docs/architecture.md](docs/architecture.md) for how the injection,
 `MutationObserver`, and search dispatch fit together, and
 [docs/publishing.md](docs/publishing.md) for the community-directory submission
-steps. Repository conventions for contributors live in
-[AGENTS.md](AGENTS.md) and [CONTRIBUTING.md](CONTRIBUTING.md).
+steps. Contributor guidelines live in [CONTRIBUTING.md](CONTRIBUTING.md).
 
 ## License
 

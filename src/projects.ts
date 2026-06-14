@@ -1,27 +1,14 @@
-/**
- * Pure, Obsidian-independent helpers.
- *
- * These hold the testable logic that used to live inline in the plugin class:
- * computing the project list from vault file paths, building graph-search
- * queries, and the no-op guard that decides whether a search update should be
- * skipped. Keeping them free of any `obsidian` import lets `npm test` exercise
- * them under plain Node, with no running Obsidian.
- */
+// Pure helpers with no `obsidian` import, so they run under plain Node in tests.
 
-/** Strip any trailing slashes from a folder path (`"projects/"` -> `"projects"`). */
+/** Strip trailing slashes from a folder path (`"projects/"` -> `"projects"`). */
 export function normalizeRoot(rootFolder: string): string {
   return rootFolder.replace(/\/+$/, "");
 }
 
 /**
- * Derive the sorted, de-duplicated list of immediate subfolders of `rootFolder`
- * from a flat list of vault file paths.
- *
- * Behaviour is preserved exactly from the original plugin: a path counts when
- * its first segment equals the (normalized) root and it has at least a second
- * segment, and the *second* segment is taken as the project name. A file that
- * sits directly inside the root therefore contributes its filename — an
- * intentional quirk kept for backwards compatibility.
+ * Sorted, de-duplicated list of immediate subfolders of `rootFolder`, taken
+ * from a flat list of vault file paths. A path matches when its first segment
+ * is the root; the second segment is the project name.
  */
 export function computeProjects(filePaths: string[], rootFolder: string): string[] {
   const root = normalizeRoot(rootFolder);
@@ -34,7 +21,7 @@ export function computeProjects(filePaths: string[], rootFolder: string): string
 }
 
 /**
- * Build the graph-search query for a project button. With no `project` it is the
+ * Graph-search query for a project button. With no `project` it is the
  * "All projects" query (`path:<root>/`); with one it scopes to that subfolder.
  */
 export function projectQuery(rootFolder: string, project?: string): string {
@@ -42,11 +29,8 @@ export function projectQuery(rootFolder: string, project?: string): string {
   return project ? `path:${root}/${project}/` : `path:${root}/`;
 }
 
-/**
- * The critical no-op guard: re-dispatching the graph's current query blanks the
- * graph, so a search update must be skipped when the trimmed current value
- * already equals the target query.
- */
+// Re-dispatching the graph's current query blanks the graph, so skip the update
+// when the trimmed current value already equals the target query.
 export function shouldSkipSearchUpdate(currentValue: string, query: string): boolean {
   return currentValue.trim() === query;
 }

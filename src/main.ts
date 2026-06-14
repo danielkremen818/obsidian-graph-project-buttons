@@ -49,8 +49,7 @@ export default class GraphProjectButtonsPlugin extends Plugin {
   onunload(): void {
     for (const observer of this.observers.values()) observer.disconnect();
     this.observers.clear();
-    // Remove every bar we injected. Scoped per graph leaf (rather than the
-    // global document) so it also covers leaves living in popout windows.
+    // Scope per graph leaf so popout windows are covered too.
     for (const leaf of this.app.workspace.getLeavesOfType("graph")) {
       const content = this.getContentEl(leaf);
       content?.querySelectorAll(".gpb-bar").forEach((el) => {
@@ -110,11 +109,11 @@ export default class GraphProjectButtonsPlugin extends Plugin {
       attr: { "aria-label": "Toggle project buttons" },
     });
     this.applyIcon(chevron, this.collapsed ? "chevron-right" : "chevron-left");
-    chevron.onclick = (event) => {
+    this.registerDomEvent(chevron, "click", (event) => {
       event.preventDefault();
       this.collapsed = !this.collapsed;
       this.refreshAll();
-    };
+    });
 
     const group = bar.createDiv({ cls: "gpb-group" });
 
@@ -125,7 +124,7 @@ export default class GraphProjectButtonsPlugin extends Plugin {
       if (this.settings.showIcons && icon) this.applyIcon(button, icon);
       button.createSpan({ text: label });
       button.dataset.query = query;
-      button.onclick = (event) => {
+      this.registerDomEvent(button, "click", (event) => {
         event.preventDefault();
         this.setSearch(leaf, query);
         group.findAll(".gpb-btn").forEach((other) => {
@@ -133,7 +132,7 @@ export default class GraphProjectButtonsPlugin extends Plugin {
         });
         chevron.removeClass("gpb-active");
         button.addClass("gpb-active");
-      };
+      });
       return button;
     };
 
