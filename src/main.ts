@@ -1,27 +1,30 @@
-import { Plugin, debounce, setIcon, type WorkspaceLeaf } from "obsidian";
+import { Menu, Plugin, debounce, setIcon, type WorkspaceLeaf } from "obsidian";
 import {
   DEFAULT_SETTINGS,
   GraphProjectButtonsSettingTab,
   type GraphProjectButtonsSettings,
 } from "./settings";
 import {
+  activeLabel,
   computeProjects,
   isActiveQuery,
   projectQuery,
   shouldSkipSearchUpdate,
+  type FilterEntry,
 } from "./projects";
+
+interface MenuEntry extends FilterEntry {
+  icon: string;
+}
 
 export default class GraphProjectButtonsPlugin extends Plugin {
   settings!: GraphProjectButtonsSettings;
 
   private projectCache: string[] | null = null;
   private readonly observers = new Map<HTMLElement, MutationObserver>();
-  private collapsed = false;
 
   async onload(): Promise<void> {
     await this.loadSettings();
-
-    this.collapsed = this.settings.startCollapsed;
 
     this.addSettingTab(new GraphProjectButtonsSettingTab(this.app, this));
 
@@ -102,67 +105,77 @@ export default class GraphProjectButtonsPlugin extends Plugin {
 
     const bar = content.createDiv({ cls: "gpb-bar" });
     bar.toggleClass("gpb-right", this.settings.position === "right");
-    bar.toggleClass("gpb-collapsed", this.collapsed);
 
-    const chevron = bar.createEl("button", {
-      cls: "gpb-btn gpb-toggle",
-      attr: { "aria-label": "Toggle project buttons" },
+    const button = bar.createEl("button", {
+      cls: "gpb-btn gpb-menu",
+      attr: { "aria-label": "Graph filter" },
     });
-    this.applyIcon(chevron, this.collapsed ? "chevron-right" : "chevron-left");
-    this.registerDomEvent(chevron, "click", (event) => {
+    if (this.settings.showIcons) this.applyIcon(button, "filter");
+    const label = button.createSpan();
+    this.applyIcon(button, "chevron-down").addClass("gpb-chevron");
+    this.updateLabel(leaf, label);
+
+    this.registerDomEvent(button, "click", (event) => {
       event.preventDefault();
-      this.collapsed = !this.collapsed;
-      this.refreshAll();
+      this.openMenu(leaf, event, label);
     });
 
-    const group = bar.createDiv({ cls: "gpb-group" });
-
-    const mk = (label: string, query: string, icon: string, extraCls?: string): HTMLElement => {
-      const button = group.createEl("button", {
-        cls: "gpb-btn" + (extraCls ? " " + extraCls : ""),
-      });
-      if (this.settings.showIcons && icon) this.applyIcon(button, icon);
-      button.createSpan({ text: label });
-      button.dataset.query = query;
-      this.registerDomEvent(button, "click", (event) => {
-        event.preventDefault();
-        this.setSearch(leaf, query);
-        group.findAll(".gpb-btn").forEach((other) => {
-          other.removeClass("gpb-active");
-        });
-        chevron.removeClass("gpb-active");
-        button.addClass("gpb-active");
-      });
-      return button;
-    };
-
-    if (this.settings.showCurated) {
-      mk(this.settings.curatedLabel, this.settings.curatedQuery, "sparkles", "gpb-primary");
-    }
-    if (this.settings.showAllButton) {
-      mk("All projects", projectQuery(this.settings.rootFolder), "layers");
-    }
-    for (const project of this.getProjects()) {
-      mk(project, projectQuery(this.settings.rootFolder, project), "folder");
-    }
-
-    this.markActive(leaf, group);
     this.observe(leaf, content);
   }
 
-  private applyIcon(el: HTMLElement, name: string): void {
+  private applyIcon(el: HTMLElement, name: string): HTMLElement {
     const span = el.createSpan({ cls: "gpb-icon" });
     setIcon(span, name);
+    return span;
   }
 
-  private markActive(leaf: WorkspaceLeaf, group: HTMLElement): void {
-    const input = this.searchInput(leaf);
-    if (!input) return;
-    const current = input.value;
-    group.findAll(".gpb-btn").forEach((button) => {
-      const query = button.dataset.query;
-      if (query && isActiveQuery(current, query)) button.addClass("gpb-active");
-    });
+  // Fixed entries (curated, all projects) and one entry per project folder.
+  private menuEntries(): { fixed: MenuEntry[]; projects: MenuEntry[] } {
+    const root = this.settings.rootFolder;
+    const fixed: MenuEntry[] = [];
+    if (this.settings.showCurated) {
+      fixed.push({
+        title: this.settings.curatedLabel,
+        query: this.settings.curatedQuery,
+        icon: "sparkles",
+      });
+    }
+    if (this.settings.showAllButton) {
+      fixed.push({ title: "All projects", query: projectQuery(root), icon: "layers" });
+    }
+    const projects = this.getProjects().map((name) => ({
+      title: name,
+      query: projectQuery(root, name),
+      icon: "folder",
+    }));
+    return { fixed, projects };
+  }
+
+  private updateLabel(leaf: WorkspaceLeaf, label: HTMLElement): void {
+    const { fixed, projects } = this.menuEntries();
+    const current = this.searchInput(leaf)?.value ?? "";
+    label.setText(activeLabel([...fixed, ...projects], current));
+  }
+
+  private openMenu(leaf: WorkspaceLeaf, event: MouseEvent, label: HTMLElement): void {
+    const { fixed, projects } = this.menuEntries();
+    const current = this.searchInput(leaf)?.value ?? "";
+    const menu = new Menu();
+    const add = (entry: MenuEntry): void => {
+      menu.addItem((item) => {
+        item.setTitle(entry.title);
+        if (this.settings.showIcons) item.setIcon(entry.icon);
+        if (isActiveQuery(current, entry.query)) item.setChecked(true);
+        item.onClick(() => {
+          this.setSearch(leaf, entry.query);
+          this.updateLabel(leaf, label);
+        });
+      });
+    };
+    fixed.forEach(add);
+    if (fixed.length > 0 && projects.length > 0) menu.addSeparator();
+    projects.forEach(add);
+    menu.showAtMouseEvent(event);
   }
 
   // Re-add the bar if the graph renderer wipes .view-content (no polling).

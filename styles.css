@@ -16,20 +16,6 @@
   flex-direction: row-reverse;
 }
 
-.gpb-group {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 4px;
-  overflow: hidden;
-  transition: opacity 120ms ease, max-width 160ms ease;
-}
-
-.gpb-bar.gpb-collapsed .gpb-group {
-  max-width: 0;
-  opacity: 0;
-  pointer-events: none;
-}
-
 .gpb-btn {
   display: inline-flex;
   align-items: center;
@@ -52,26 +38,6 @@
   background: var(--background-modifier-hover);
 }
 
-.gpb-active {
-  color: var(--text-on-accent);
-  background: var(--interactive-accent);
-  border-color: var(--interactive-accent);
-}
-
-.gpb-primary {
-  color: var(--text-accent);
-  border-color: var(--text-accent);
-}
-
-.gpb-primary.gpb-active {
-  color: var(--text-on-accent);
-  background: var(--interactive-accent);
-}
-
-.gpb-toggle {
-  padding: 3px 5px;
-}
-
 .gpb-icon {
   display: inline-flex;
   align-items: center;
@@ -80,4 +46,23 @@
 .gpb-icon svg {
   width: 13px;
   height: 13px;
+}
+
+/* The button is the bar's only flex item; let it shrink and truncate its label
+   instead of overflowing a narrow pane onto the graph controls. */
+.gpb-menu {
+  max-width: 100%;
+  min-width: 0;
+}
+
+.gpb-menu > span:not(.gpb-icon) {
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.gpb-menu .gpb-chevron svg {
+  width: 11px;
+  height: 11px;
+  opacity: 0.7;
 }

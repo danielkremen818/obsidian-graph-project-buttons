@@ -4,7 +4,7 @@ import type GraphProjectButtonsPlugin from "./main";
 export type BarPosition = "left" | "right";
 
 export interface GraphProjectButtonsSettings {
-  /** Top-level folder whose subfolders become buttons. */
+  /** Top-level folder whose subfolders become menu entries. */
   rootFolder: string;
   /** Graph search applied by the curated reset button. */
   curatedQuery: string;
@@ -18,8 +18,6 @@ export interface GraphProjectButtonsSettings {
   showIcons: boolean;
   /** Which side of the graph the bar docks to. */
   position: BarPosition;
-  /** Open the graph with only the toggle visible. */
-  startCollapsed: boolean;
 }
 
 export const DEFAULT_SETTINGS: GraphProjectButtonsSettings = {
@@ -30,7 +28,6 @@ export const DEFAULT_SETTINGS: GraphProjectButtonsSettings = {
   showAllButton: true,
   showIcons: true,
   position: "left",
-  startCollapsed: false,
 };
 
 export class GraphProjectButtonsSettingTab extends PluginSettingTab {
@@ -47,7 +44,7 @@ export class GraphProjectButtonsSettingTab extends PluginSettingTab {
 
     new Setting(containerEl)
       .setName("Projects root folder")
-      .setDesc("Top-level folder whose subfolders become buttons.")
+      .setDesc("Top-level folder whose subfolders become menu entries.")
       .addText((text) =>
         text
           .setValue(this.plugin.settings.rootFolder)
@@ -119,16 +116,6 @@ export class GraphProjectButtonsSettingTab extends PluginSettingTab {
             this.plugin.settings.position = value === "right" ? "right" : "left";
             await this.plugin.saveSettings();
           }),
-      );
-
-    new Setting(containerEl)
-      .setName("Start collapsed")
-      .setDesc("Open the graph with only the toggle visible.")
-      .addToggle((toggle) =>
-        toggle.setValue(this.plugin.settings.startCollapsed).onChange(async (value) => {
-          this.plugin.settings.startCollapsed = value;
-          await this.plugin.saveSettings();
-        }),
       );
   }
 }

@@ -6,6 +6,20 @@ adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
 
+## [1.2.0] - 2026-10-04
+
+### Changed
+- The row of filter buttons is collapsed into one compact button, labelled with
+  the active filter, that opens a native Obsidian menu of the same entries.
+  A long label truncates with an ellipsis instead of overflowing a narrow pane.
+
+### Fixed
+- Files directly under the root folder no longer appear as projects; only real
+  subfolders do. Dot-folders (such as `.claude`) are skipped.
+
+### Removed
+- The chevron collapse toggle and the `startCollapsed` setting.
+
 ## [1.1.2] - 2026-06-14
 
 ### Added
@@ -49,7 +63,8 @@ plugin to a TypeScript + esbuild repository.
 - Full settings tab (root folder, curated query/label, button toggles, icons,
   position, start-collapsed) persisted via `loadData`/`saveData`.
 
-[Unreleased]: https://github.com/danielkremen818/obsidian-graph-project-buttons/compare/1.1.2...HEAD
+[Unreleased]: https://github.com/danielkremen818/obsidian-graph-project-buttons/compare/1.2.0...HEAD
+[1.2.0]: https://github.com/danielkremen818/obsidian-graph-project-buttons/compare/1.1.2...1.2.0
 [1.1.2]: https://github.com/danielkremen818/obsidian-graph-project-buttons/compare/1.1.1...1.1.2
 [1.1.1]: https://github.com/danielkremen818/obsidian-graph-project-buttons/compare/1.1.0...1.1.1
 [1.1.0]: https://github.com/danielkremen818/obsidian-graph-project-buttons/releases/tag/1.1.0
