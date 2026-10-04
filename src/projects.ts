@@ -8,14 +8,18 @@ export function normalizeRoot(rootFolder: string): string {
 /**
  * Sorted, de-duplicated list of immediate subfolders of `rootFolder`, taken
  * from a flat list of vault file paths. A path matches when its first segment
- * is the root; the second segment is the project name.
+ * is the root and it has at least three segments (`root/<folder>/<file>`); the
+ * second segment is the project name. Files directly under the root and
+ * dot-folders (`.claude`) are skipped.
  */
 export function computeProjects(filePaths: string[], rootFolder: string): string[] {
   const root = normalizeRoot(rootFolder);
   const set = new Set<string>();
   for (const filePath of filePaths) {
     const parts = filePath.split("/");
-    if (parts[0] === root && parts.length > 1) set.add(parts[1]);
+    if (parts[0] !== root || parts.length < 3) continue;
+    if (parts[1].startsWith(".")) continue;
+    set.add(parts[1]);
   }
   return [...set].sort((a, b) => a.localeCompare(b));
 }
@@ -38,4 +42,18 @@ export function shouldSkipSearchUpdate(currentValue: string, query: string): boo
 /** Whether a button whose query is `query` should be highlighted as active. */
 export function isActiveQuery(currentValue: string, query: string): boolean {
   return currentValue.trim() === query;
+}
+
+/** A filter entry in the graph menu: its visible title and the query it sets. */
+export interface FilterEntry {
+  title: string;
+  query: string;
+}
+
+/** Menu-button label: the title of the entry matching the current search, else `Filter`. */
+export function activeLabel(entries: FilterEntry[], currentValue: string): string {
+  for (const entry of entries) {
+    if (isActiveQuery(currentValue, entry.query)) return entry.title;
+  }
+  return "Filter";
 }

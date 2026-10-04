@@ -46,13 +46,13 @@ On load the plugin:
 - Finds the leaf's `.view-content` (`getContentEl`) and bails if a `.gpb-bar`
   already exists there (idempotent).
 - Builds the bar with `createDiv`/`createEl`/`createSpan` (never `innerHTML`):
-  a chevron toggle, then the **Curated** button, the **All projects** button,
-  and one button per project from `getProjects()`.
-- Each button stores its query in `dataset.query`, applies a lucide icon via
-  `setIcon`, and on click calls `setSearch(leaf, query)` and updates the active
-  highlight.
-- Calls `markActive` to highlight the button matching the current search, and
-  `observe` to start watching the content element.
+  a single `.gpb-menu` button holding an optional icon, the active filter's
+  label (`activeLabel`, `Filter` when nothing matches) and a chevron.
+- On click it opens a native `Menu` (`showAtMouseEvent`): the **Curated** entry,
+  the **All projects** entry, a separator, then one entry per project from
+  `getProjects()`. Picking an entry calls `setSearch(leaf, query)` and
+  recomputes the button label.
+- Calls `observe` to start watching the content element.
 
 `getProjects()` caches `computeProjects(vault.getFiles().map(f => f.path), root)`
 and only recomputes after the cache is invalidated by a vault event or a
@@ -81,7 +81,7 @@ input.dispatchEvent(new Event("input", { bubbles: true }));
 **The no-op guard is load-bearing.** Re-dispatching an `input` event when the
 value already equals the query blanks the graph. `shouldSkipSearchUpdate`
 (trimmed equality) prevents that, and the same comparison (`isActiveQuery`)
-decides which button is highlighted.
+decides which menu entry is checked and what the button label shows.
 
 ## Cleanup
 

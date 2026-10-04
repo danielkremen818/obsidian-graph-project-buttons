@@ -3,22 +3,21 @@
 One-click project filter buttons for the Obsidian graph view, so you never have
 to type `path:` queries by hand.
 
-The plugin injects a small button bar into every graph view: one button per
-subfolder of a configurable root folder (default `projects`), plus a **Curated**
-reset button and an **All projects** button. Click a button and the graph's
-search is set for you.
+The plugin injects one compact filter button into every graph view. It opens a
+menu with a **Curated** reset entry, an **All projects** entry, and one entry per
+subfolder of a configurable root folder (default `projects`). Pick an entry and
+the graph's search is set for you.
 
 ![Graph Project Buttons in the graph view](docs/screenshot.png)
 
 ## Features
 
-- A button per immediate subfolder of your projects root, auto-discovered from
-  the vault.
-- A **Curated** button that applies a configurable reset query (default
-  `-path:projects/`) and an **All projects** button (`path:<root>/`).
-- Active-button highlighting that reflects the graph's current search.
-- Collapsible bar (chevron toggle), per-button [lucide](https://lucide.dev)
-  icons, and a left/right dock position.
+- A menu entry per immediate subfolder of your projects root, auto-discovered
+  from the vault. Loose files under the root and dot-folders are ignored.
+- A **Curated** entry that applies a configurable reset query (default
+  `-path:projects/`) and an **All projects** entry (`path:<root>/`).
+- The button shows the active filter's name and the menu checks its entry.
+- Per-entry [lucide](https://lucide.dev) icons and a left/right dock position.
 - Re-injects itself when the graph re-renders, using a `MutationObserver` — no
   polling.
 - The project list is cached and only recomputed when files are created,
@@ -50,23 +49,21 @@ Open **Settings → Community plugins → Browse**, search for
 
 ## Usage
 
-Open any graph view. The bar appears in the top corner. Click a project button
-to filter the graph to that subfolder, **Curated** to apply your reset query, or
-the chevron to collapse the bar. The button matching the current search is
-highlighted.
+Open any graph view. The filter button appears in the top corner, labelled with
+the active filter (or **Filter** when none matches). Click it and pick a project
+to filter the graph to that subfolder, or **Curated** to apply your reset query.
 
 ## Settings
 
 | Setting | Default | Description |
 |---|---|---|
-| Projects root folder | `projects` | Top-level folder whose subfolders become buttons. |
+| Projects root folder | `projects` | Top-level folder whose subfolders become menu entries. |
 | Curated query | `-path:projects/` | Graph search applied by the curated reset button. |
 | Curated button label | `Curated` | Label shown on the curated reset button. |
 | Show curated button | on | Show the curated reset button. |
 | Show all-projects button | on | Show the **All projects** button. |
 | Show icons | on | Show per-button lucide icons. |
 | Bar position | Top left | Dock the bar to the top left or top right. |
-| Start collapsed | off | Open the graph with only the toggle visible. |
 
 ## Development
 
