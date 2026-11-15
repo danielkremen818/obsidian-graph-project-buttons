@@ -6,6 +6,13 @@ adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
 
+## [1.2.1] - 2026-11-15
+
+### Security
+- Updated dev dependencies to clear Dependabot alerts: minimatch to 11.0.8 (pinned
+  with an npm override), brace-expansion, js-yaml and fast-uri. None of them
+  ship in the plugin bundle.
+
 ## [1.2.0] - 2026-10-04
 
 ### Changed
